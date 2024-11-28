@@ -1,16 +1,23 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
+#include <fstream>
 
 using namespace std;
 
-void getInitialVariables(float &, int &, int &);
-void getLetterCredit(string[], int[], int);
+ifstream FileGpa("gpa.txt"); // global variable for reading file
+
+void userSetInitialVariables(float &, int &, int &);
+void userSetLetterCreditRepeat(string[], int[], int);
+void fileSetInitialVariables(float &, int &, int &);
+void fileSetLetterCreditRepeat(string[], int[], int);
+
 void calcSubjectValue(float[], string[], int);
 void calcWeightedValues(float[], float[], int[], int);
 void sum(float &, float[], int);
 void intSum(int &, int[], int);
 void getEvaluation(string &, float);
+
 void print(float, float, float, string);
 
 int main()
@@ -33,13 +40,47 @@ int main()
     int num_of_subjects = 0, cumHours = 0;
     float cumGPA = 0.0;
 
-    getInitialVariables(cumGPA, cumHours, num_of_subjects);
+    char choice = 'n';
+    do
+    {
+        cout << "do you want to enter values 'm'anually or using a 'f'ile? ";
+        cin >> choice;
+    } while (choice != 'm' && choice != 'f');
+
+    if (choice == 'm')
+    {
+        userSetInitialVariables(cumGPA, cumHours, num_of_subjects);
+    }
+    else if (choice == 'f')
+    {
+        fileSetInitialVariables(cumGPA, cumHours, num_of_subjects);
+    }
+    else
+    {
+        cout << "how did you get past the do while loop?\n";
+    }
 
     // declaring arrays based on user input
     string subjectLetter[num_of_subjects];
     int subjectCredit[num_of_subjects];
-
-    getLetterCredit(subjectLetter, subjectCredit, num_of_subjects);
+    char subjectRepeat[num_of_subjects];
+    /*
+    will the only difference be
+    subtracting the subject hours from
+    the cumulative hours before calculations?
+    */
+    if (choice == 'm')
+    {
+        userSetLetterCreditRepeat(subjectLetter, subjectCredit, num_of_subjects);
+    }
+    else if (choice == 'f')
+    {
+        fileSetLetterCreditRepeat(subjectLetter, subjectCredit, num_of_subjects);
+    }
+    else
+    {
+        cout << "how did you get past the do while loop?\n";
+    }
 
     /*calculating subject values
     based on first letter of string*/
@@ -87,7 +128,7 @@ int main()
 // **********************************
 // **********************************
 
-void getInitialVariables(float &cgpa, int &chours, int &numofsub)
+void userSetInitialVariables(float &cgpa, int &chours, int &numofsub)
 {
     // getting initial info from user
     cout << "what is your cumulative GPA? ";
@@ -98,7 +139,7 @@ void getInitialVariables(float &cgpa, int &chours, int &numofsub)
     cin >> numofsub;
 }
 
-void getLetterCredit(string sl[], int sc[], int numofsub)
+void userSetLetterCreditRepeat(string sl[], int sc[], int numofsub) // add repeat n / y
 {
     // getting arrays values
     for (int i = 0; i < numofsub; i++)
@@ -125,6 +166,34 @@ void getLetterCredit(string sl[], int sc[], int numofsub)
         cout << "enter subject No." << i + 1 << " credit hours: ";
         cin >> sc[i];
     }
+}
+
+void fileSetInitialVariables(float &cgpa, int &chours, int &numofsub)
+{
+    // getting initial info from file
+    cout << "setting inital info using gpa.txt\n";
+    FileGpa >> cgpa;
+    FileGpa >> chours;
+    FileGpa >> numofsub;
+}
+
+void fileSetLetterCreditRepeat(string sl[], int sc[], int numofsub) // add repeat n / y
+{
+    // getting arrays values
+    cout << "setting subject letter credit repeat using gpa.txt\n";
+    for (int i = 0; i < numofsub; i++)
+    {
+        FileGpa >> sl[i];
+        if (sl[i] != "A" && sl[i] != "A-" && sl[i] != "B+" &&
+            sl[i] != "B" && sl[i] != "B-" && sl[i] != "C+" &&
+            sl[i] != "C" && sl[i] != "C-" && sl[i] != "D+" &&
+            sl[i] != "D" && sl[i] != "D-" && sl[i] != "F")
+        {
+            cout << "wtf man.\n";
+        }
+        FileGpa >> sc[i];
+    }
+    FileGpa.close();
 }
 
 void calcSubjectValue(float sv[], string sl[], int numofsub)
@@ -229,7 +298,7 @@ void getEvaluation(string &eva, float ncgpa)
 
 void print(float sgpa, float cgpa, float ncgpa, string eva)
 {
-    cout << "\n***********************\n\n-----------------------";
+    cout << "\n-----------------------";
     cout << "\nyour semester GPA = " << setprecision(4) << sgpa << "\n";
     cout << "\nyour old stinky cumulative GPA = " << cgpa << "\n";
     cout << "\nyour new shiny cumulative GPA = " << setprecision(4) << ncgpa << "\n";
