@@ -1,8 +1,11 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
+#include <fstream>
 
 using namespace std;
+
+ifstream FileGpa("gpa.txt");
 
 void getInitialVariables(float &, int &, int &);
 void getLetterCredit(string[], int[], int);
