@@ -233,7 +233,7 @@ void calcSubjectValue(float sv[], string sl[], int numofsub)
         switch (sl[i][1])
         {
         case '+':
-            sv[i] += 0.25;
+            sv[i] += 0.50;
             break;
         case '-':
             sv[i] -= 0.25;
@@ -300,8 +300,8 @@ void print(float sgpa, float cgpa, float ncgpa, string eva)
 {
     cout << "\n-----------------------";
     cout << "\nyour semester GPA = " << setprecision(4) << sgpa << "\n";
-    cout << "\nyour old stinky cumulative GPA = " << cgpa << "\n";
-    cout << "\nyour new shiny cumulative GPA = " << setprecision(4) << ncgpa << "\n";
+    cout << "\nyour old cumulative GPA = " << cgpa << "\n";
+    cout << "\nyour new cumulative GPA = " << setprecision(4) << ncgpa << "\n";
     cout << "\nevaluation: " << eva << "\n";
     cout << "-----------------------\n\n";
 }
