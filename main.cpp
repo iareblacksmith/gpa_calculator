@@ -4,6 +4,19 @@
 #include <fstream>
 
 using namespace std;
+/*FIGURED OUT REGULAR EXPRESSIONS!!!
+    regex test("(?![AFaf][+]|[Ff][-])[A-Da-dFf][-+]?");
+    string myString = "F+";
+
+    if (regex_match(myString, test))
+    {
+        cout << "meow\n";
+    }
+    else
+    {
+        cout << "nah\n";
+    }
+*/
 
 ifstream FileGpa("gpa.txt"); // global variable for reading file
 
