@@ -7,6 +7,20 @@ using namespace std;
 
 ifstream FileGpa("gpa.txt"); // global variable for reading file
 
+/*FIGURED OUT REGULAR EXPRESSIONS!!!
+    regex test("(?![AFaf][+]|[Ff][-])[A-Da-dFf][-+]?");
+    string myString = "F+";
+
+    if (regex_match(myString, test))
+    {
+        cout << "meow\n";
+    }
+    else
+    {
+        cout << "nah\n";
+    }
+*/
+
 void userSetInitialVariables(float &, int &, int &);
 void userSetLetterCreditRepeat(string[], int[], int);
 void fileSetInitialVariables(float &, int &, int &);
