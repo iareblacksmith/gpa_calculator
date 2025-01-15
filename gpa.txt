@@ -1,28 +1,39 @@
-3.12
-39
-6
+<cumulative gpa>
+<cumulative hours>
+<number of subjects>
 
-A
-1
-y
-F
+<subject 1 letter>
+<subject 1 credit hours>
+<subject 1 repeated? (y,n)>
+<if repeated add old letter grade, else just delete this>
+
+<subject 2 letter>
+<subject 2 credit hours>
+<subject 2 repeated? (y,n)>
+<if repeated add old letter grade, else just delete this>
+
+<subject 3 letter>
+<subject 3 credit hours>
+<subject 3 repeated? (y,n)>
+<if repeated add old letter grade, else just delete this line>
+
+NOTE: DELETE THIS LINE AND EVERYTHING AFTER IT
+<you get the point, do that format for as many subjects as you have>
+
+// example:
+3.54
+42
+3
 
 A-
 3
 n
 
 B+
-2
-n
-
-C+
 3
-n
+y
+D+
 
 A
-3
-n
-
-A-
-3
+2
 n
