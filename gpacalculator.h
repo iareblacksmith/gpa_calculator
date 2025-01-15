@@ -9,8 +9,9 @@
 struct Subject
 {
     std::string letter_grade;
-    std::string repeated_letter_grade;
+    std::string old_letter_grade;
     float number_grade;
+    float old_number_grade;
     int credit_hours;
     float grade_points;
     bool repeated;
@@ -28,7 +29,7 @@ public:
     void title_screen();              // just the title screen
     void userset_initial_variables(); // userset nos, cumh, cumgpa
     void fileset_initial_variables(); // fileset nos, cumh, cumgpa
-    void calculate_grade_points();
+    void calculate_grade_points(Subject[]);
     void update_gpa_repeated(); // take out grade points of repeated subjects
     void calculate_semester_gpa();
     void calculate_new_gpa();
@@ -85,6 +86,7 @@ void Gpa_Calculator::userset_initial_variables()
     std::cin >> cumulative_hours;
     std::cout << "\nhow many subjects are you calculating? ";
     std::cin >> number_of_subjects;
+
     for (int i = 0; i < number_of_subjects; i++)
     {
         std::cout << "\n***********************\n\n";
@@ -123,31 +125,91 @@ void Gpa_Calculator::userset_initial_variables()
 
         // -----------------------
 
+        // THERE HAS TO BE A MORE EFFICIENT WAYYYY
+        // can you repeat a function but for a different parameter?
         if (subjects[i].repeated)
         {
             std::cout << "enter subject (" << i + 1 << ") repeated repeated grade: ";
-            std::cin >> subjects[i].repeated_letter_grade;
-            while (!regex_match(subjects[i].repeated_letter_grade, letter))
+            std::cin >> subjects[i].old_letter_grade;
+            while (!regex_match(subjects[i].old_letter_grade, letter))
             {
                 std::cout << "invalid input, please try again... ";
-                std::cin >> subjects[i].repeated_letter_grade;
+                std::cin >> subjects[i].old_letter_grade;
             }
         }
+
+        // -----------------------
     }
 }
 
 void Gpa_Calculator::fileset_initial_variables()
 {
     inputFile.open("gpa.txt");
+
+    if (!inputFile.is_open())
+    {
+        std::cerr << "gpa.txt could not be opened!\n";
+        return;
+    }
+
     inputFile >> cumulative_gpa;
     inputFile >> cumulative_hours;
     inputFile >> number_of_subjects;
-}
 
-void Gpa_Calculator::calculate_grade_points()
-{
     for (int i = 0; i < number_of_subjects; i++)
     {
+        inputFile >> subjects[i].letter_grade;
+        if (!regex_match(subjects[i].letter_grade, letter))
+        {
+            std::cerr << "error when reading file\n";
+            return;
+        }
+
+        // -----------------------
+
+        inputFile >> subjects[i].credit_hours;
+
+        // -----------------------
+
+        std::string input_repeated;
+        inputFile >> input_repeated;
+        if (!regex_match(input_repeated, repeated_regex))
+        {
+            std::cerr << "error when reading file\n";
+            return;
+        }
+
+        if (input_repeated == "y" || input_repeated == "Y")
+        {
+            subjects[i].repeated = true;
+        }
+        else
+        {
+            subjects[i].repeated = false;
+        }
+
+        // -----------------------
+
+        if (subjects[i].repeated)
+        {
+            inputFile >> subjects[i].old_letter_grade;
+            if (!regex_match(subjects[i].old_letter_grade, letter))
+            {
+                std::cerr << "error when reading file\n";
+                return;
+            }
+        }
+    }
+
+    inputFile.close();
+}
+
+void Gpa_Calculator::calculate_grade_points(Subject subjects[])
+{
+    // TRANSLATE STRING INTO FLOAT
+    for (int i = 0; i < number_of_subjects; i++)
+    {
+
         switch (subjects[i].letter_grade[0])
         {
         case 'a':
@@ -171,31 +233,74 @@ void Gpa_Calculator::calculate_grade_points()
             subjects[i].number_grade = 0.0;
             break;
         default:
-            std::cout << "you entered goofy letter, quitting program";
-            break;
+            std::cerr << "you entered goofy letter, quitting program\n";
+            return;
         }
-    }
 
-    /*incrementing and decrementing by 0.25
-    based on second letter of string*/
-    for (int i = 0; i < number_of_subjects; i++)
-    {
-        switch ([i][1])
+        /*incrementing and decrementing by 0.25
+        based on second letter of string*/
+        // this is kinda fucked up but
+        if (subjects[i].letter_grade.length() == 2)
         {
-        case '+':
-            sv[i] += 0.50;
+            switch (subjects[i].letter_grade[1])
+            {
+            case '+':
+                subjects[i].number_grade += 0.50;
+                break;
+            case '-':
+                subjects[i].number_grade -= 0.25;
+                break;
+            default:
+                break;
+            }
+        }
+
+        // -----------------------
+
+        switch (subjects[i].old_letter_grade[0])
+        {
+        case 'a':
+        case 'A':
+            subjects[i].old_number_grade = 4.0;
             break;
-        case '-':
-            sv[i] -= 0.25;
+        case 'b':
+        case 'B':
+            subjects[i].old_number_grade = 3.0;
+            break;
+        case 'c':
+        case 'C':
+            subjects[i].old_number_grade = 2.0;
+            break;
+        case 'd':
+        case 'D':
+            subjects[i].old_number_grade = 1.0;
+            break;
+        case 'f':
+        case 'F':
+            subjects[i].old_number_grade = 0.0;
             break;
         default:
-            break;
+            std::cerr << "you entered goofy letter, quitting program\n";
+            return;
         }
-    }
-    // TRANSLATE STRING INTO FLOAT
-    for (int i = 0; i < number_of_subjects; i++)
-    {
-        subjects[i].grade_points = subjects[i].
+
+        /*incrementing and decrementing by 0.25
+        based on second letter of string*/
+        if (subjects[i].old_letter_grade.length() == 2)
+        {
+            switch (subjects[i].old_letter_grade[1])
+            {
+            case '+':
+                subjects[i].old_number_grade += 0.50;
+                break;
+            case '-':
+                subjects[i].old_number_grade -= 0.25;
+                break;
+            default:
+                break;
+            }
+        }
+        subjects[i].grade_points = subjects[i].old_number_grade
     }
 }
 
