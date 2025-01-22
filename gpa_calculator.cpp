@@ -1,55 +1,4 @@
-// validate number of credit hours???
-#pragma once
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <iomanip>
-#include <regex>
-#include <limits>
-
-struct Subject
-{
-    std::string letter_grade;
-    std::string old_letter_grade;
-    float number_grade;
-    float old_number_grade;
-    int credit_hours;
-    float grade_points;
-    float old_grade_points;
-    bool repeated;
-};
-
-std::regex letter("(?![AFaf][+]|[Ff][-])[A-Da-dFf][-+]?");
-std::regex repeated_regex("[NnYy]");
-
-template <typename T>
-void input_validation(T &, T, T);
-
-class Gpa_Calculator
-{
-public:
-    Gpa_Calculator();
-    ~Gpa_Calculator();
-
-    void title_screen(); // just the title screen
-    void calculate_grade_points(Subject[]);
-    void calculate_semester_gpa();
-    void calculate_new_gpa();
-    void get_evaluation();
-    void userset_variables(); // userset nos, cumh, cumgpa
-    void fileset_variables(); // fileset nos, cumh, cumgpa
-    void print();
-
-    void run();
-    void file_run();
-
-private:
-    std::ifstream inputFile;
-    Subject subjects[100];
-    int number_of_subjects, cumulative_hours;
-    float grade_points_total, cumulative_gpa, new_gpa, semester_gpa;
-    std::string evaluation;
-};
+#include "gpa_calculator.h"
 
 Gpa_Calculator::Gpa_Calculator()
 {
@@ -244,21 +193,11 @@ void Gpa_Calculator::get_evaluation()
 void Gpa_Calculator::userset_variables()
 {
     std::cout << "what is your cumulative GPA? ";
-    input_validation(cumulative_gpa, 0.0, 4.0);
+    input_validation(cumulative_gpa, 0.0f, 4.0f);
     std::cout << "\ncumulative hours? ";
-    while (!(std::cin >> cumulative_hours && cumulative_hours >= 0 && cumulative_hours <= 200))
-    {
-        std::cout << "invalid input, please try again: ";
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
+    input_validation(cumulative_hours, 0, 200);
     std::cout << "\nhow many subjects are you calculating? ";
-    while (!(std::cin >> &&subjects[i].credit_hours >= 0 && subjects[i].credit_hours <= 6))
-    {
-        std::cout << "invalid input, please try again: ";
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
+    input_validation(number_of_subjects, 1, 100);
 
     grade_points_total = cumulative_gpa * cumulative_hours;
 
@@ -277,19 +216,14 @@ void Gpa_Calculator::userset_variables()
         // -----------------------
 
         std::cout << "enter subject (" << i + 1 << ") credit hours: ";
-        while (!(std::cin >> subjects[i].credit_hours && subjects[i].credit_hours >= 0 && subjects[i].credit_hours <= 6))
-        {
-            std::cout << "invalid input, please try again: ";
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        }
+        input_validation(subjects[i].credit_hours, 0, 6);
 
         // -----------------------
 
         std::string input_repeated;
         std::cout << "is subject (" << i + 1 << ") repeated (y, n)? ";
         std::cin >> input_repeated;
-        while (!regex_match(input_repeated, repeated_regex))
+        while (!regex_match(input_repeated, yesorno))
         {
             std::cout << "invalid input, please try again... ";
             std::cin >> input_repeated;
@@ -367,7 +301,7 @@ void Gpa_Calculator::fileset_variables()
         std::string input_repeated;
         inputFile >> input_repeated;
 
-        if (!regex_match(input_repeated, repeated_regex))
+        if (!regex_match(input_repeated, yesorno))
         {
             std::cerr << "error when reading file, exiting function\n";
             return;
