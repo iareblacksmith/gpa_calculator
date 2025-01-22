@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iomanip>
 #include <regex>
+#include <limits>
 
 struct Subject
 {
@@ -20,6 +21,9 @@ struct Subject
 
 std::regex letter("(?![AFaf][+]|[Ff][-])[A-Da-dFf][-+]?");
 std::regex repeated_regex("[NnYy]");
+
+template <typename T>
+void input_validation(T &, T, T);
 
 class Gpa_Calculator
 {
@@ -240,11 +244,21 @@ void Gpa_Calculator::get_evaluation()
 void Gpa_Calculator::userset_variables()
 {
     std::cout << "what is your cumulative GPA? ";
-    std::cin >> cumulative_gpa;
+    input_validation(cumulative_gpa, 0.0, 4.0);
     std::cout << "\ncumulative hours? ";
-    std::cin >> cumulative_hours;
+    while (!(std::cin >> cumulative_hours && cumulative_hours >= 0 && cumulative_hours <= 200))
+    {
+        std::cout << "invalid input, please try again: ";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
     std::cout << "\nhow many subjects are you calculating? ";
-    std::cin >> number_of_subjects;
+    while (!(std::cin >> &&subjects[i].credit_hours >= 0 && subjects[i].credit_hours <= 6))
+    {
+        std::cout << "invalid input, please try again: ";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
 
     grade_points_total = cumulative_gpa * cumulative_hours;
 
@@ -263,7 +277,12 @@ void Gpa_Calculator::userset_variables()
         // -----------------------
 
         std::cout << "enter subject (" << i + 1 << ") credit hours: ";
-        std::cin >> subjects[i].credit_hours;
+        while (!(std::cin >> subjects[i].credit_hours && subjects[i].credit_hours >= 0 && subjects[i].credit_hours <= 6))
+        {
+            std::cout << "invalid input, please try again: ";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
 
         // -----------------------
 
@@ -417,4 +436,15 @@ void Gpa_Calculator::file_run()
     title_screen();
     fileset_variables();
     print();
+}
+
+template <typename T>
+void input_validation(T &variable, T lower, T upper)
+{
+    while (!(std::cin >> variable && variable >= lower && variable <= upper))
+    {
+        std::cout << "invalid input, please try again: ";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
 }
