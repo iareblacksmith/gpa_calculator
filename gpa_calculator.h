@@ -1,11 +1,8 @@
-// validate number of credit hours???
 #pragma once
-#include <iostream>
 #include <string>
 #include <fstream>
-#include <iomanip>
 #include <regex>
-#include <limits>
+#include <unordered_map>
 
 struct Subject
 {
@@ -19,9 +16,6 @@ struct Subject
     bool repeated;
 };
 
-std::regex letter("(?![AFaf][+]|[Ff][-])[A-Da-dFf][-+]?");
-std::regex yesorno("[NnYy]");
-
 template <typename T>
 void input_validation(T &, T, T);
 
@@ -31,13 +25,13 @@ public:
     Gpa_Calculator();
     ~Gpa_Calculator();
 
-    void title_screen(); // just the title screen
+    void title_screen();
     void calculate_grade_points(Subject[]);
     void calculate_semester_gpa();
     void calculate_new_gpa();
     void get_evaluation();
-    void userset_variables(); // userset nos, cumh, cumgpa
-    void fileset_variables(); // fileset nos, cumh, cumgpa
+    void userset_variables();
+    void fileset_variables();
     void print();
 
     void run();
@@ -49,4 +43,19 @@ private:
     int number_of_subjects, cumulative_hours;
     float grade_points_total, cumulative_gpa, new_gpa, semester_gpa;
     std::string evaluation;
+    std::unordered_map<std::string, float> grade_map =
+        {
+            {"A", 4.00f},
+            {"A-", 3.75f},
+            {"B+", 3.50f},
+            {"B", 3.00f},
+            {"B-", 2.75f},
+            {"C+", 2.50f},
+            {"C", 2.00f},
+            {"C-", 1.75f},
+            {"D+", 1.50f},
+            {"D", 1.00f},
+            {"D-", 0.75f},
+            {"F", 0.00f},
+    };
 };

@@ -1,4 +1,10 @@
 #include "gpa_calculator.h"
+#include <iostream>
+#include <iomanip>
+#include <limits>
+
+std::regex letter("^[A-Da-d][-+]?|[Ff]$");
+std::regex yesorno("^[YyNn]$");
 
 Gpa_Calculator::Gpa_Calculator()
 {
@@ -35,107 +41,16 @@ void Gpa_Calculator::title_screen()
 
 void Gpa_Calculator::calculate_grade_points(Subject subjects[])
 {
-    // TRANSLATE STRING INTO FLOAT
     for (int i = 0; i < number_of_subjects; i++)
     {
-
         if (subjects[i].repeated)
         {
-            switch (subjects[i].old_letter_grade[0])
-            {
-            case 'a':
-            case 'A':
-                subjects[i].old_number_grade = 4.0;
-                break;
-            case 'b':
-            case 'B':
-                subjects[i].old_number_grade = 3.0;
-                break;
-            case 'c':
-            case 'C':
-                subjects[i].old_number_grade = 2.0;
-                break;
-            case 'd':
-            case 'D':
-                subjects[i].old_number_grade = 1.0;
-                break;
-            case 'f':
-            case 'F':
-                subjects[i].old_number_grade = 0.0;
-                break;
-            default:
-                std::cerr << "you entered goofy letter, quitting program\n";
-                return;
-            }
 
-            /*incrementing and decrementing by 0.25
-            based on second letter of string*/
-            if (subjects[i].old_letter_grade.length() == 2)
-            {
-                switch (subjects[i].old_letter_grade[1])
-                {
-                case '+':
-                    subjects[i].old_number_grade += 0.50;
-                    break;
-                case '-':
-                    subjects[i].old_number_grade -= 0.25;
-                    break;
-                default:
-                    break;
-                }
-            }
-
-            // taking out the grade points and credit hours of the repeated subject
-            subjects[i].old_grade_points = subjects[i].old_number_grade * subjects[i].credit_hours;
             grade_points_total -= subjects[i].old_grade_points;
             cumulative_hours -= subjects[i].credit_hours;
         }
 
-        switch (subjects[i].letter_grade[0])
-        {
-        case 'a':
-        case 'A':
-            subjects[i].number_grade = 4.0;
-            break;
-        case 'b':
-        case 'B':
-            subjects[i].number_grade = 3.0;
-            break;
-        case 'c':
-        case 'C':
-            subjects[i].number_grade = 2.0;
-            break;
-        case 'd':
-        case 'D':
-            subjects[i].number_grade = 1.0;
-            break;
-        case 'f':
-        case 'F':
-            subjects[i].number_grade = 0.0;
-            break;
-        default:
-            std::cerr << "you entered goofy letter, quitting program\n";
-            return;
-        }
-
-        /*incrementing and decrementing by 0.25
-        based on second letter of string*/
-        // this is kinda fucked up but
-        if (subjects[i].letter_grade.length() == 2)
-        {
-            switch (subjects[i].letter_grade[1])
-            {
-            case '+':
-                subjects[i].number_grade += 0.50;
-                break;
-            case '-':
-                subjects[i].number_grade -= 0.25;
-                break;
-            default:
-                break;
-            }
-        }
-
+        subjects[i].number_grade = grade_map[subjects[i].letter_grade];
         /*adding grade points of subjects to the total
         and credit hours to cumulative hours*/
         subjects[i].grade_points = subjects[i].number_grade * subjects[i].credit_hours;
@@ -206,12 +121,14 @@ void Gpa_Calculator::userset_variables()
         std::cout << "\n***********************\n\n";
 
         std::cout << "enter subject (" << i + 1 << ") letter: ";
-        std::cin >> subjects[i].letter_grade;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        getline(std::cin, subjects[i].letter_grade);
         while (!regex_match(subjects[i].letter_grade, letter))
         {
             std::cout << "invalid input, please try again... ";
-            std::cin >> subjects[i].letter_grade;
+            getline(std::cin, subjects[i].letter_grade);
         }
+        subjects[i].letter_grade = std::toupper(subjects[i].letter_grade[0]);
 
         // -----------------------
 
@@ -222,24 +139,16 @@ void Gpa_Calculator::userset_variables()
 
         std::string input_repeated;
         std::cout << "is subject (" << i + 1 << ") repeated (y, n)? ";
-        std::cin >> input_repeated;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        getline(std::cin, subjects[i].letter_grade);
+        ////////////// LEFT OFF HERE
         while (!regex_match(input_repeated, yesorno))
         {
             std::cout << "invalid input, please try again... ";
             std::cin >> input_repeated;
         }
-        if (input_repeated == "y" || input_repeated == "Y")
-        {
-            subjects[i].repeated = true;
-        }
-        else if (input_repeated == "n" || input_repeated == "N")
-        {
-            subjects[i].repeated = false;
-        }
-        else
-        {
-            std::cout << "wtf? how did you get passed the regex?";
-        }
+
+        subjects[i].repeated = (std::tolower(input_repeated[0]) == 'y');
 
         // -----------------------
 
@@ -254,6 +163,7 @@ void Gpa_Calculator::userset_variables()
                 std::cout << "invalid input, please try again... ";
                 std::cin >> subjects[i].old_letter_grade;
             }
+            subjects[i].old_letter_grade = std::toupper(subjects[i].old_letter_grade[0]);
         }
     }
 
@@ -375,9 +285,9 @@ void Gpa_Calculator::file_run()
 template <typename T>
 void input_validation(T &variable, T lower, T upper)
 {
-    while (!(std::cin >> variable && variable >= lower && variable <= upper))
+    while (!((std::cin >> variable) && (variable >= lower) && (variable <= upper)))
     {
-        std::cout << "invalid input, please try again: ";
+        std::cout << "invalid input, please try again (" << lower << "-" << upper << "): ";
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
