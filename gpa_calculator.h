@@ -2,7 +2,6 @@
 #include <string>
 #include <fstream>
 #include <regex>
-#include <unordered_map>
 
 struct Subject
 {
@@ -26,10 +25,13 @@ public:
     ~Gpa_Calculator();
 
     void title_screen();
+    void title_screen();
     void calculate_grade_points(Subject[]);
     void calculate_semester_gpa();
     void calculate_new_gpa();
     void get_evaluation();
+    void userset_variables();
+    void fileset_variables();
     void userset_variables();
     void fileset_variables();
     void print();

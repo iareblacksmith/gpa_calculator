@@ -3,8 +3,9 @@
 #include <iomanip>
 #include <limits>
 
-std::regex letter("^[A-Da-d][-+]?|[Ff]$");
-std::regex yesorno("^[YyNn]$");
+// **************************************
+// ***********Gpa_Calculator*************
+// **************************************
 
 Gpa_Calculator::Gpa_Calculator()
 {
